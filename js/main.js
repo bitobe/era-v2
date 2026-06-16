@@ -2,6 +2,17 @@
 (function () {
   'use strict';
 
+  /* --- Прелоадер: проигрывается при каждой загрузке страницы --- */
+  var pre = document.getElementById('preloader');
+  if (pre) {
+    document.documentElement.style.overflow = 'hidden';
+    setTimeout(function () {
+      pre.classList.add('is-hidden');
+      document.documentElement.style.overflow = '';
+      setTimeout(function () { if (pre.parentNode) pre.parentNode.removeChild(pre); }, 750);
+    }, 2000);
+  }
+
   var header = document.getElementById('header');
   var burger = document.getElementById('burger');
   var nav = document.getElementById('nav');
@@ -49,7 +60,7 @@
     });
     // закрываем при ресайзе на десктоп
     window.addEventListener('resize', function () {
-      if (window.innerWidth > 760) closeMenu();
+      if (window.innerWidth > 1024) closeMenu();
     });
   }
 
@@ -64,6 +75,18 @@
       e.preventDefault();
       var top = target.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
       window.scrollTo({ top: top, behavior: 'smooth' });
+    });
+  });
+
+  /* --- FAQ-аккордеон: открыт только один вопрос --- */
+  document.querySelectorAll('.pp-faq').forEach(function (faq) {
+    faq.addEventListener('click', function (e) {
+      var q = e.target.closest('.pp-faq__q');
+      if (!q || !faq.contains(q)) return;
+      var item = q.closest('.pp-faq__item');
+      var wasOpen = item.classList.contains('open');
+      faq.querySelectorAll('.pp-faq__item.open').forEach(function (it) { it.classList.remove('open'); });
+      if (!wasOpen) item.classList.add('open');
     });
   });
 
